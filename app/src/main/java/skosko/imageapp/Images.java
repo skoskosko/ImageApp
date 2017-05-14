@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -81,6 +82,25 @@ public class Images extends AppCompatActivity implements SensorEventListener {
                         ImageAdapter adapter = new ImageAdapter(getApplicationContext(), imageList);
                         pisteet.setAdapter(adapter);
 
+                        pisteet.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                ImageItem yourData = imageList.get(position);
+
+
+                                Intent intent = new Intent(Images.this, SingleImage.class);
+                                intent.putExtra("location", yourData.location);
+                                intent.putExtra("url", yourData.url);
+                                intent.putExtra("time", yourData.time);
+                                intent.putExtra("name", yourData.name);
+
+                                startActivity(intent);
+
+
+
+
+                            }
+                        });
 
                     }
                 }, new Response.ErrorListener() {
@@ -105,6 +125,15 @@ public class Images extends AppCompatActivity implements SensorEventListener {
         }
 
         sensorManager.registerListener(this,vatupassisensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+
+
+
+
+
+
+
+
 
     }
 

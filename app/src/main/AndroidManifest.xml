@@ -4,10 +4,20 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission  android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
     <uses-feature android:name="android.hardware.camera" />
+
+    <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version" />
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="@string/google_android_map_api_key" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,15 +28,19 @@
         <activity
             android:name=".Images"
             android:label="@string/title_activity_images"
-            android:theme="@style/AppTheme.NoActionBar">+
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UploadImage"></activity>
+        <activity android:name=".UploadImage" />
+        <activity
+            android:name=".SingleImage"
+            android:label="@string/title_activity_images"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".Map"></activity>
     </application>
 
 </manifest>
