@@ -19,7 +19,6 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -28,6 +27,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Hashtable;
@@ -58,22 +60,20 @@ public class UploadImage extends AppCompatActivity implements LocationListener{
 
 
         if (Integer.valueOf(Build.VERSION.SDK_INT) >= Build.VERSION_CODES.M) {
-
-            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 ActivityCompat.requestPermissions((Activity) getApplicationContext(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         0);
-
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            }else{
                     LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     double latitude = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
                     double longdirude = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
 
                     TextView asd = (TextView) findViewById(R.id.textViewLocation);
                     asd.setText(latitude + "-" + longdirude);
+
                 }
-            }
         }
 
 
@@ -86,6 +86,15 @@ public class UploadImage extends AppCompatActivity implements LocationListener{
 
             }
         });
+
+
+
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
 
     }
 
@@ -112,7 +121,8 @@ public class UploadImage extends AppCompatActivity implements LocationListener{
                     @Override
                     public void onResponse(String s) {
                         loading.dismiss();
-                        Toast.makeText(UploadImage.this, s , Toast.LENGTH_LONG).show();
+                        System.out.println(s);
+                        //Toast.makeText(UploadImage.this, s , Toast.LENGTH_LONG).show();
                         finish();
                     }
                 },
@@ -120,7 +130,8 @@ public class UploadImage extends AppCompatActivity implements LocationListener{
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         loading.dismiss();
-                        Toast.makeText(UploadImage.this, "Failure" , Toast.LENGTH_LONG).show();
+                        System.out.println("error");
+                        //Toast.makeText(UploadImage.this, "Failure" , Toast.LENGTH_LONG).show();
                         finish();
                     }
                 }){
@@ -146,7 +157,7 @@ public class UploadImage extends AppCompatActivity implements LocationListener{
 
     public String getStringImage(Bitmap bmp){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 75, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;

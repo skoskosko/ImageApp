@@ -1,7 +1,9 @@
 package skosko.imageapp;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -54,15 +58,52 @@ public class Images extends AppCompatActivity implements SensorEventListener {
 
                 captureImage();
 
-//                Intent intent = new Intent(getApplicationContext(), UploadImage.class);
-//                startActivity(intent);
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
             }
         });
 
 
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED||ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                ) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    124);
+        }
+
+        imagus();
+
+
+
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor vatupassisensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+        if (vatupassisensor == null) {
+            // ei kiihtyvyysanturia
+            Toast.makeText(this, "Rikki", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        sensorManager.registerListener(this,vatupassisensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+
+
+
+
+
+
+
+
+
+    }
+
+    void imagus(){
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
         String url ="http://takku.eu/ImageApp/index.php/getImages";
@@ -113,31 +154,7 @@ public class Images extends AppCompatActivity implements SensorEventListener {
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Sensor vatupassisensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-
-        if (vatupassisensor == null) {
-            // ei kiihtyvyysanturia
-            Toast.makeText(this, "Rikki", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        sensorManager.registerListener(this,vatupassisensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-
-
-
-
-
-
-
-
-
     }
-
-
 
     long lastUpdate;
     float x;
@@ -146,7 +163,7 @@ public class Images extends AppCompatActivity implements SensorEventListener {
     float last_x;
     float last_y;
     float last_z;
-    private static final int SHAKE_THRESHOLD = 800;
+    private static final int SHAKE_THRESHOLD = 1400;
     
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -164,7 +181,7 @@ public class Images extends AppCompatActivity implements SensorEventListener {
                 float speed = Math.abs(x+y+z - last_x - last_y - last_z) / diffTime * 10000;
 
                 if (speed > SHAKE_THRESHOLD) {
-
+                    imagus();
                 }
                 last_x = x;
                 last_y = y;
